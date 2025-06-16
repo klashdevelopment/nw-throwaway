@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Not just an unblocker | aaa</title>
+    <link rel="stylesheet" href="https://unpkg.com/xp.css" id="theme">
+    <link rel="shortcut icon" href="/logo/w11.png"type="image/png">
+    <link rel="stylesheet" href="/index.css">
+    <link rel="stylesheet" href="search.css">
+    <link rel="manifest" href="/manifest.json">
+    <script src="uv/uv.bundle.js" defer></script>
+    <script src="uv/uv.config.js" defer></script>
+    <script src="register-sw.js" defer></script>
+    <script src="search.js" defer></script>
+    <script src="index.js" defer></script>
+</head>
+
+<body class="xp">
+    <div id="cursor_blob"></div>
+    <div style="width:100vw;height:100vh;background-size:300%;z-index:10000;background-image: url(/images/bghd.jpeg);background-repeat: no-repeat;position:absolute;background-position:50% 50%;display:flex;align-items:center;justify-content:center;" class=noblur id="imagecoveringscreen">
+        <a style="top:200px;position:absolute;z-index:10003;color:white;font-weight:600;font-family:Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;font-size:3.75rem;" id="_time_screen"></a>
+        <a style="top:280px;position:absolute;z-index:10003;color:white;font-weight:400;font-family:Roboto,Oxygen,Ubuntu,Cantarell,Fira Sans,Droid Sans,Helvetica Neue,sans-serif;font-size:1.125rem;" id="_date_screen">Monday, January 0</a>
+        <input id="name" placeholder="Enter Username"><br/>
+        <button id="sign">Sign In</button>
+        <script>
+            var timeInHours24hr = (new Date(Date.now())).getHours();
+            var timeInHoursAMPM = timeInHours24hr > 12 ? timeInHours24hr - 12 : timeInHours24hr;
+            var AMorPM = timeInHours24hr > 12 ? 'PM' : 'AM';
+            var minutes = (new Date(Date.now())).getMinutes() < 10 ? '0'+(new Date(Date.now())).getMinutes() : (new Date(Date.now())).getMinutes();
+            document.querySelector('#_time_screen').textContent = ``+timeInHoursAMPM+':'+minutes+` `+AMorPM;
+        </script>
+    <script>
+        if(window.localStorage.name) {
+            document.querySelector('#name').value = window.localStorage.name;
+        }
+        document.querySelector('#sign').addEventListener('click', () => {
+            window.localStorage.name = document.querySelector('#name').value;
+            fetch('/log_name?name='+document.querySelector('#name').value);
+            document.querySelector('#imagecoveringscreen').classList.add('movingup')
+            setTimeout(() => {
+                document.querySelector('#imagecoveringscreen').remove()
+                
+                document.body.id = ''
+            }, 500);
+        });
+    </script>
+    </div>
+
+        <div class="popup-confirm hidden">
+            <div class="popup-confirm-body">
+                <div class="popup-confirm-body-text">Are you sure you want to do this?</div>
+                <div class="popup-confirm-body-buttons">
+                    <button class="popup-confirm-body-button" onclick="document.querySelector('.popup-confirm').classList.add('hidden')">Cancel</button>
+                    <button class="popup-confirm-body-button" onclick="document.querySelector('.popup-confirm').classList.add('hidden')">OK</button>
+                </div>
+            </div>
+        </div>
+    <div id="windows" style="width:100vw;height:100vh;">
+    
+        
+        <div class="w11-window acrylic shadow hidden" id="theme-swapper" style='left:100px;top:40px;width:400px;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">Theme Swapper</span>
+                <div class="icon" onclick="alert('Close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body" style="padding:20px;">
+                <section class="field-row">
+                    Pick your theme's base color:
+                    <input type="color" id="basecolor" value="#0000ff">
+                </section>
+            </div>
+        </div>
+        <div class="w11-window acrylic shadow hidden" id="file-explorer-app" style='left:490px;top:40px;width:450px;height:250px;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">File Explorer | Apps</span>
+                <div class="icon" onclick="this.parentElement.parentElement.classList.toggle('hidden')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <section class="field-row">
+                    <div class="grid-right apps" id="appbtns" style="position: absolute;left:0;top:50px;">
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="w11-window acrylic shadow hidden" id="file-explorer-os" style='left:490px;top:40px;width:450px;height:250px;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">File Explorer | OSes</span>
+                <div class="icon" onclick="this.parentElement.parentElement.classList.toggle('hidden')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <p style="border-bottom: 1px solid black;"><b>WARNING</b>: You do need a login for these! Contact me for a chance to get one.</p>
+                <section class="field-row">
+                    <div class="grid-right apps" id="osbtns" style="position: absolute;left:0;top:50px;">
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="w11-window acrylic shadow hidden" id="file-explorer" style='left:10px;top:10px;width:450px;height:250px;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">File Explorer</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body"><section class="field-row">
+                    <div class="grid-right" style="position: absolute;left:0;top:50px;">
+                        <div class="grid-item" onclick="document.querySelector('#file-explorer-game').classList.toggle('hidden');">
+                            <img src="./images/explorer.png">
+                            <div class="title">Games</div>
+                            </div>
+                        <div class="grid-item" onclick="document.querySelector('#file-explorer-app').classList.toggle('hidden');">
+                            <img src="./images/explorer.png">
+                            <div class="title">Apps</div>
+                            </div>
+                            <div class="grid-item" onclick="document.querySelector('#file-explorer-os').classList.toggle('hidden');">
+                                <img src="./images/explorer.png">
+                                <div class="title">Locked - Kasm</div>
+                            </div>
+                            <div class="grid-item" onclick="window.open('https://klash.dev')">
+                                <img src="https://klash.dev/klash/KlashDevelopment_Profile.png" style="border-radius:10px;">
+                                <div class="title">Credits</div>
+                            </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="w11-window acrylic shadow hidden" id="file-explorer-game" style='left:490px;top:290px;width:450px;height:250px;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">File Explorer | Games</span>
+                <div class="icon" onclick="this.parentElement.parentElement.classList.toggle('hidden')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <section class="field-row">
+                    <div class="grid-right" id="programbtns" style="position: absolute;left:0;top:50px;">
+                    </div>
+                </section>
+            </div>
+        </div>
+        <div class="w11-window acrylic shadow hidden" id="ie" style='left:10vw;top:30px;width:80vw;height:80vh;overflow-y:scroll;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">Microsoft Edge</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.');" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body" style="overflow-y:scroll;">
+                <div class="second hidden" style="width:100%;height:50px">
+
+                </div>
+                <div class="first">    <div
+                    title="Logo"
+                    class="flex-center logo-wrapper header-center"
+                >
+                    <img class="logo" src="/logo/nwLogo.png" />
+                </div>
+
+                <form id="uv-form" class="flex-center">
+                    <input
+                    id="uv-search-engine"
+                    value="https://www.google.com/search?q=%s"
+                    type="hidden"
+                    autocomplete="off"
+                    />
+                    <input id="uv-address" type="text" placeholder="search the (not) web"
+                    autocomplete="off"/>
+                </form></div>
+                <iframe class="hidden" src="" style="width:100%;height:100%" frameborder="0"></iframe>
+            </div>
+        </div>
+
+        <div class="w11-window acrylic shadow hidden" id="schedule" style='left:10vw;top:30px;width:80vw;height:90vh;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">Schedule</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <iframe src="https://schedulizer.klash.dev" allow-same-origin  frameborder="0" style="overflow: scroll;
+                border: 0;
+                transform: scale(1);
+                -ms-transform-origin: 0 0;
+                -moz-transform-origin: 0 0;
+                -o-transform-origin: 0 0;
+                -webkit-transform-origin: 0 0;
+                transform-origin: 0 0;margin:0;padding:0;width:100%;height:100%;"></iframe>
+            </div>
+        </div>
+
+        <div class="w11-window acrylic shadow hidden" id="newsroom" style='left:10vw;top:30px;width:80vw;height:90vh;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">News</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <b id="newsroom_element"></b>
+                <script>
+                    fetch("https://raw.githubusercontent.com/klashdevelopment/Raw-Storage/main/notwindows/news")
+                    .then((res)=>res.text()).then(res=>{
+                        res.split(`\n`).forEach(x =>{
+                            document.querySelector('#newsroom_element').innerHTML += `<br>${x}`
+                        })
+                    })
+                </script>
+            </div>
+        </div>
+
+        <div class="w11-window acrylic shadow hidden" id="chrome" style='left:10vw;top:30px;width:40vw;height:40vh;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">msk1o</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <h1>MSkio</h1>
+                <h3>100% chrome - 0% blocked</h3>
+                <i>This is a work in progress guide</i>
+
+            </div>
+        </div>
+
+        <div class="w11-window acrylic shadow hidden" id="chrome" style='left:10vw;top:30px;width:40vw;height:40vh;'>
+            <div class="w11-titlebar">
+                <span id="w11-title">Game Adder</span>
+                <div class="icon" onclick="alert('Please close using taskbar at bottom of screen.')" style="right:0;border-top-right-radius: 10px;">x</div>
+                <div class="icon" onclick="" style="right:40px;">-</div>
+                <div class="icon" onclick="" style="right:80px;">+</div>
+            </div>
+            <div class="w11-body">
+                <input type="text" placeholder="XOR" id="xorencode"> <button onclick="document.querySelector('#xorencode').value = window.xor.encode(document.querySelector('#xorencode').value);">XOR Encode</button><br/>
+                <a style="color:white;font-family: Arial, Helvetica, sans-serif;font-weight: 600;font-size: 18px;" href="https://newgrim.klash.dev/" target="_blank">Use Newgrim to Generate the JSON</a><br>
+                <textarea name="" id="jsoncontent_ngrm" style="background-color: #444;color:white;" cols="80" rows="2" placeholder="Insert JSON content here"></textarea>
+                <br>
+                <button onclick="
+                alert('Feature not fully implemented - please email it to me at gavinfox8')
+                ">Send it to me to request</button>
+                <button onclick="
+                var jsoncontent = document.querySelector('#jsoncontent_ngrm').value;
+                var json = JSON.parse(jsoncontent);
+                var name = json.name;
+                var url = json.url;
+
+                var iframe = document.createElement('iframe');
+                iframe.src = url
+                iframe.style='width:90%;height:80%;'
+                this.parentElement.appendChild(iframe);
+                this.parentElement.querySelector('textarea').remove();
+                this.remove();
+                this.parentElement.querySelector('a').remove();
+                this.parentElement.querySelector('button').remove()
+                this.parentElement.querySelector('button').remove()
+
+                this.parentElement.parentElement.querySelector('.title-bar-text').innerHTML = name;
+                ">Preview (refresh to undo)</button><br>
+            </div>
+        </div>
+    </div>
+    <div class="start-menu hidden">
+        <div class="start-menu-header">
+            <div class="start-button"></div>
+            <div class="start-menu-title">John<br>Doe</div>
+            <div class="start-menu-search">
+                <input type="text" placeholder="Search" />
+                <div class="search-icon"></div>
+            </div>
+        </div>
+        <div class="start-menu-items">
+            <div class="start-menu-item" onclick="document.querySelector('#file-explorer').classList.toggle('hidden');">
+                <img src="/images/file.png" alt="IE">
+                <a>File Explorer</a>
+            </div>
+            <div class="start-menu-item" onclick="document.querySelector('#ie').classList.toggle('hidden');">
+                <img src="/images/ie.png" alt="IE">
+                <a>Internet Explorer</a>
+            </div>
+            <div class="start-menu-item" onclick="document.querySelector('#theme-swapper').classList.toggle('hidden');">
+                <img src="/images/paintbrush.webp" alt="themes">
+                <a>Theme Changer</a>
+            </div>
+            <div class="start-menu-item" onclick="document.querySelector('#discord').classList.toggle('hidden');">
+                <img src="https://www.svgrepo.com/show/353655/discord-icon.svg" alt="discord">
+                <a>Discord</a>
+            </div>
+        </div>
+    </div>
+    <div class="startmenu11 hidden">
+        <div class="bottom">
+            <div class="user-control" onclick="window.popupWithOptions('','window.localStorage.clear();window.close();','Are you sure you want to log out?')">
+                <img src="https://archive.org/download/WindowsXPUserAccountPictures/Windows%20XP%20-%20User%20Account%20Pictures.zip/red%20flower.bmp" width="30" height=30 style="border-radius: 50%;" alt="">
+                <span style="margin-left:5px;">John Doe</span>
+            </div>
+            <div class="right-icons">
+                <img style="filter: brightness(0) invert(1);" height="15" width="15" src="/images/moon.png" alt="" onclick="window.popupWithOptions('','document.body.id=\'blurrybody\';window.addBackCover()','Are you sure you want to sleep the computer?')">
+                <img style="filter: brightness(0) invert(1);" src="/images/w11/power.svg" alt="" onclick="window.popupWithOptions('','document.body.id=\'blurrybody\';window.addBackCover()','Are you sure you want to power off?')">
+            </div>
+        </div>
+    </div>
+    <div class="searchmenu11 hidden">
+        <div class="bottom-border"></div>
+        <div class="search-bar">
+            <div class="search-icon">
+                <img width="26" src="/images/w11/search.svg" alt="">
+            </div>
+            <input type="text" placeholder="Search the web and Windows">
+            <script>
+                document.addEventListener('keydown', function(e){
+                    if(e.key == 'Enter'){
+                        if(document.querySelector('.search-bar>input') === document.activeElement){
+                            document.querySelector('#ie').classList.remove('hidden');
+                            document.querySelector('#ie>.w11-body>iframe').src='/uv/service/'+xor.encode('https://www.google.com/search?q='+document.querySelector('.search-bar>input').value);
+                            document.querySelector('#searchtbb').click()
+                            document.querySelector('#edgebtn').dataset.enabled = 'true'
+                        }
+                    }
+                })
+            </script>
+        </div>
+        <div class="fourrecommend">
+            <b style="position: absolute;top:5px;left:6px;">Top apps</b>
+            <div class="app" onclick="document.querySelector('#file-explorer').classList.toggle('hidden');document.querySelector('#file-explorer-os').classList.add('hidden');document.querySelector('#file-explorer-app').classList.add('hidden');document.querySelector('#file-explorer-game').classList.add('hidden');document.querySelector('#searchtbb').click()">
+                <img src="./images/explorer.png" alt="">
+                <span>Explorer</span>
+            </div>
+            <div class="app" onclick="EnableFrame('discord','/uv/service/'+xor.encode('https://discord.com/app'));document.querySelector('#searchtbb').click()">
+                <img src="./images/discord.png" alt="">
+                <span>Discord</span>
+            </div>
+            <div class="app"></div>
+            <div class="app"></div>
+            <div class="app"></div>
+        </div>
+    </div>
+    <div class="taskbar-w11">
+        <div class="start-btns">
+            <div class="startbtn" onclick="if(document.querySelector('.startmenu11').classList.contains('zoomin')){
+                document.querySelector('.startmenu11').classList.remove('zoomin');
+                document.querySelector('.startmenu11').classList.add('zoomout');
+                setTimeout(() => {
+                    document.querySelector('.startmenu11').classList.remove('zoomout');
+                    document.querySelector('.startmenu11').classList.add('hidden');
+                }, 200);
+            }else{
+                document.querySelector('.startmenu11').classList.add('zoomin');
+                    document.querySelector('.startmenu11').classList.remove('hidden');
+            }"><img src="/logo/w11.png" width=30 height=30 alt=""></div>
+            <div class="startbtn" onclick="if(document.querySelector('.searchmenu11').classList.contains('zoomin')){
+                document.querySelector('.searchmenu11').classList.remove('zoomin');
+                document.querySelector('.searchmenu11').classList.add('zoomout');
+                setTimeout(() => {
+                    document.querySelector('.searchmenu11').classList.remove('zoomout')
+                    document.querySelector('.searchmenu11').classList.add('hidden');
+                }, 200);
+            }else{
+                document.querySelector('.searchmenu11').classList.remove('hidden');
+                document.querySelector('.searchmenu11').classList.add('zoomin');
+            }"><img src="/images/w11/search.svg" alt="" id="searchtbb"></div>
+            <div class="startbtn" onclick="document.querySelector('#file-explorer').classList.toggle('hidden');document.querySelector('#file-explorer-os').classList.add('hidden');document.querySelector('#file-explorer-app').classList.add('hidden');document.querySelector('#file-explorer-game').classList.add('hidden');"><img width=30 src="/images/explorer.png" alt=""></div>
+            <div class="startbtn" id="edgebtn" onclick="document.querySelector('#ie').classList.toggle('hidden');"><img width=30 src="/images/edge.png" alt=""></div>
+            <div class="startbtn" onclick="document.querySelector('#newsroom').classList.toggle('hidden')"><img width=30 src="/images/news.png" alt=""></div>
+            <div class="startbtn" onclick="document.querySelector('#schedule').classList.toggle('hidden')"><img width=30 src="/images/calendar.webp" alt=""></div>
+            <div class="startbtn" onclick="document.querySelector('#theme-swapper').classList.toggle('hidden')"><img width=30 src="/images/paint.png" alt=""></div>
+            <div class="startbtn" onclick="document.querySelector('#chrome').classList.toggle('hidden')"><img width=30 src="/images/Gaming.webp" alt=""></div>
+            
+            <script>
+                document.querySelectorAll('.startbtn').forEach(x => {
+                    x.dataset.enabled = false;
+                    x.addEventListener('click', () => {
+                        x.dataset.enabled = x.dataset.enabled=='false'?'true':'false'
+                        if(x.dataset.enabled == 'false'){
+                            x.classList.add('disabling')
+                            setTimeout(() => {
+                                x.classList.remove('disabling')
+                            }, 200);
+                        }else {
+                            document.querySelectorAll('.startbtn').forEach(y => {
+                                if(y != x){
+                                    if(y.dataset.enabled == 'true') {
+                                        y.click();
+                                    }
+                                }
+                            });
+                        }
+                    })
+                })
+            </script>
+        </div>
+        <div class="rightstart">
+            <div class="centericons">
+                <img src="/images/w11/audio3.png" alt="">
+                <img src="/images/w11/battery.svg" alt="">
+                <img src="/images/w11/wifi.png" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="taskbar">
+        <div class="start-btn" onclick="document.querySelector('.start-menu').classList.toggle('hidden')"></div>
+    </div>
+    <script type="module" src="/uv/sw.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
+    <script>
+        $(function () {
+            // Make boxes draggable
+            $(".window").draggable({
+                handle: ".title-bar",
+                stack: ".window",
+                containment: "parent",
+                axis: 'xy',
+                delay: 1000
+            });
+
+            // Bring clicked box to the top
+            $(".window").on("click", function () {
+                $(".window").each(function () {
+                    $(this).css("z-index", 1);
+                });
+                $(this).css("z-index", 2);
+            });
+
+            // Set initial z-index
+            $(".window").each(function () {
+                $(this).css("z-index", 1);
+            });
+        });
+        $(function () {
+            // Make boxes draggable
+            $(".w11-window").draggable({
+                handle: ".w11-titlebar",
+                stack: ".w11-window",
+                containment: "parent",
+                axis: 'xy'
+            });
+
+            // Bring clicked box to the top
+            $(".w11-window").on("click", function () {
+                $(".window").each(function () {
+                    $(this).css("z-index", 1);
+                });
+                $(this).css("z-index", 2);
+            });
+
+            // Set initial z-index
+            $(".w11-window").each(function () {
+                $(this).css("z-index", 1);
+            });
+        });
+    </script>
+    <script src="gaming.js"></script>
+</body>
+
+</html>
